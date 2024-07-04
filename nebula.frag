@@ -1,6 +1,3 @@
-/* Nebula */
-/* https://glslsandbox.com/e#48330.0 */
-
 #ifdef GL_ES
 precision highp float;
 #endif
@@ -143,3 +140,6 @@ void main() {
     gl_FragColor = vec4(backCol2, 1.0);
 
 }
+
+/* Nebula */
+/* https://glslsandbox.com/e#48330.0 */

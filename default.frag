@@ -1,7 +1,3 @@
-/* Default */
-/* https://glslsandbox.com/e#98988.0 */
-
-
 precision mediump float;
 
 #define NUM_OCTAVES 4
@@ -93,4 +89,3 @@ void main(void) {
 
     gl_FragColor = vec4(color, 1.0);
 }
-

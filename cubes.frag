@@ -1,8 +1,3 @@
-/*
-* Cubes
-* https://glslsandbox.com/e#45436.0
-*/
-
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -59,3 +54,8 @@ void main(void)
     vec3 tint = vec3(st - 0.5,0.5,st + 0.5);
     gl_FragColor = vec4(fc * tint, 1.0);
 }
+
+/*
+* Cubes
+* https://glslsandbox.com/e#45436.0
+*/

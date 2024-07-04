@@ -1,6 +1,3 @@
-/* Blue-Beige */
-/* https://glslsandbox.com/e#67474.0 */
-
 precision highp float;
 
 uniform vec2 resolution;
@@ -77,3 +74,6 @@ void main() {
 
     gl_FragColor = vec4(color, 1.);
 }
+
+/* Blue-Beige */
+/* https://glslsandbox.com/e#67474.0 */

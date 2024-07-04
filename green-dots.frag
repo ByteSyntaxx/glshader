@@ -1,5 +1,4 @@
-/* Green Dots */
-/* https://glslsandbox.com/e#70624.0 */
+
 
 #ifdef GL_ES
 precision mediump float;
@@ -28,3 +27,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 void main(void) {
     mainImage(gl_FragColor, gl_FragCoord.xy);
 }
+
+/* Green Dots */
+/* https://glslsandbox.com/e#70624.0 */

@@ -1,6 +1,3 @@
-/* Blue Violet */
-/* https://glslsandbox.com/e#92560.0 */
-
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -29,3 +26,6 @@ void main() {
     gl_FragColor = vec4(col, 1.0);
     gl_FragColor = vec4(gl_FragColor.xyz, 1.);
 }
+
+/* Blue Violet */
+/* https://glslsandbox.com/e#92560.0 */

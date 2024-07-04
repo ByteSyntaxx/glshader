@@ -1,6 +1,3 @@
-/* Smoke Shader */
-/* */
-
 #ifdef GL_ES
 precision lowp float;
 #endif

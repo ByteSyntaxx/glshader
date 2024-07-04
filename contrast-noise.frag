@@ -1,6 +1,3 @@
-/* Contrast Noise */
-/* https://glslsandbox.com/e#99091.0 */
-
 precision highp float;
 
 uniform vec2 resolution;
@@ -77,3 +74,6 @@ void main() {
 
     gl_FragColor = vec4(color, 1.);
 }
+
+/* Contrast Noise */
+/* https://glslsandbox.com/e#99091.0 */
