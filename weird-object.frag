@@ -1,6 +1,5 @@
-/*
- * Original shader from: https://www.shadertoy.com/view/3tXXRn
- */
+/* Weird Object */
+/* https://glslsandbox.com/e#55969.0 */
 
 #ifdef GL_ES
 precision mediump float;
