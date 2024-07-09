@@ -1,131 +1,322 @@
-precision mediump float;
+/*
+ * Original shader from: https://www.shadertoy.com/view/3tXXRn
+ */
 
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+// glslsandbox uniforms
 uniform float time;
 uniform vec2 resolution;
 
-mat2 rot(in float a){float c = cos(a), s = sin(a);return mat2(c,s,-s,c);}
-const mat3 m3 = mat3(0.33338, 0.56034, -0.71817, -0.87887, 0.32651, -0.15323, 0.15162, 0.69596, 0.61339)*1.93;
-float mag2(vec2 p){return dot(p,p);}
-float linstep(in float mn, in float mx, in float x){ return clamp((x - mn)/(mx - mn), 0., 1.); }
-float prm1 = 0.;
-vec2 bsMo = vec2(0);
+// shadertoy emulation
+#define iTime time
+#define iResolution resolution
 
-vec2 disp(float t){ return vec2(sin(t*0.22)*1., cos(t*0.175)*1.)*2.; }
+// Emulate a black texture
+#define textureLod(s, uv, lod) vec4(0.0)
+#define texelFetch(s, uv, lod) vec4(0.0)
 
-vec2 map(vec3 p)
+// Emulate some GLSL ES 3.x
+#define round(x) (floor((x) + 0.5))
+mat3 transpose(const in mat3 m)
 {
-    vec3 p2 = p;
-    p2.xy -= disp(p.z).xy;
-    p.xy *= rot(sin(p.z+time)*(0.1 + prm1*0.05) + time*0.09);
-    float cl = mag2(p2.xy);
-    float d = 0.;
-    p *= .61;
-    float z = 1.;
-    float trk = 1.;
-    float dspAmp = 0.1 + prm1*0.2;
-    for(int i = 0; i < 5; i++)
+    return mat3(
+        m[0][0], m[1][0], m[2][0],
+        m[0][1], m[1][1], m[2][1],
+        m[0][2], m[1][2], m[2][2]);
+}
+
+// --------[ Original ShaderToy begins here ]---------- //
+
+// Spherical Fibonnacci points, as described by Benjamin Keinert, Matthias Innmann, 
+// Michael Sanger and Marc Stamminger in their paper (below)
+
+//=================================================================================================
+// http://lgdv.cs.fau.de/uploads/publications/spherical_fibonacci_mapping_opt.pdf
+//=================================================================================================
+const float PI  = 3.14159265359;
+const float PHI = 1.61803398875;
+
+// Originally from https://www.shadertoy.com/view/lllXz4
+// Modified by fizzer to put out the vector q.
+vec2 inverseSF( vec3 p, float n, out vec3 outq ) 
+{
+    float m = 1.0 - 1.0/n;
+    
+    float phi = min(atan(p.y, p.x), PI), cosTheta = p.z;
+    
+    float k  = max(2.0, floor( log(n * PI * sqrt(5.0) * (1.0 - cosTheta*cosTheta))/ log(PHI+1.0)));
+    float Fk = pow(PHI, k)/sqrt(5.0);
+    vec2  F  = vec2( round(Fk), round(Fk * PHI) ); // k, k+1
+
+    vec2 ka = 2.0*F/n;
+    vec2 kb = 2.0*PI*( fract((F+1.0)*PHI) - (PHI-1.0) );    
+    
+    mat2 iB = mat2( ka.y, -ka.x, 
+                    kb.y, -kb.x ) / (ka.y*kb.x - ka.x*kb.y);
+    
+    vec2 c = floor( iB * vec2(phi, cosTheta - m));
+    float d = 8.0;
+    float j = 0.0;
+    for( int s=0; s<4; s++ ) 
     {
-		p += sin(p.zxy*0.75*trk + time*trk*.8)*dspAmp;
-        d -= abs(dot(cos(p), sin(p.yzx))*z);
-        z *= 0.57;
-        trk *= 1.4;
-        p = p*m3;
-    }
-    d = abs(d + prm1*3.)+ prm1*.3 - 2.5 + bsMo.y;
-    return vec2(d + cl*.2 + 0.25, cl);
-}
-
-vec4 render( in vec3 ro, in vec3 rd, float time )
-{
-	vec4 rez = vec4(0);
-    const float ldst = 8.;
-	vec3 lpos = vec3(disp(time + ldst)*0.5, time + ldst);
-	float t = 1.5;
-	float fogT = 0.;
-	for(int i=0; i<130; i++)
-	{
-		if(rez.a > 0.99)break;
-
-		vec3 pos = ro + t*rd;
-        vec2 mpv = map(pos);
-		float den = clamp(mpv.x-0.3,0.,1.)*1.12;
-		float dn = clamp((mpv.x + 2.),0.,3.);
+        vec2 uv = vec2( float(s-2*(s/2)), float(s/2) );
         
-		vec4 col = vec4(0);
-        if (mpv.x > 0.6)
+        float i = round(dot(F, uv + c));
+        
+        float phi = 2.0*PI*fract(i*PHI);
+        float cosTheta = m - 2.0*i/n;
+        float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
+        
+        vec3 q = vec3( cos(phi)*sinTheta, sin(phi)*sinTheta, cosTheta );
+        float squaredDistance = dot(q-p, q-p);
+        if (squaredDistance < d) 
         {
-        
-            col = vec4(sin(vec3(5.,0.4,0.2) + mpv.y*0.1 +sin(pos.z*0.4)*0.5 + 1.8)*0.5 + 0.5,0.08);
-            col *= den*den*den;
-			col.rgb *= linstep(4.,-2.5, mpv.x)*2.3;
-            float dif =  clamp((den - map(pos+.8).x)/9., 0.001, 1. );
-            dif += clamp((den - map(pos+.35).x)/2.5, 0.001, 1. );
-            col.xyz *= den*(vec3(0.005,.045,.075) + 1.5*vec3(0.033,0.07,0.03)*dif);
+            outq = q;
+            d = squaredDistance;
+            j = i;
         }
-		
-		float fogC = exp(t*0.2 - 2.2);
-		col.rgba += vec4(0.06,0.11,0.11, 0.1)*clamp(fogC-fogT, 0., 1.);
-		fogT = fogC;
-		rez = rez + col*(1. - rez.a);
-		t += clamp(0.5 - dn*dn*.05, 0.09, 0.3);
-	}
-	return clamp(rez, 0.0, 1.0);
+    }
+    return vec2( j, sqrt(d) );
 }
 
-float getsat(vec3 c)
+vec2 intersectSphere(vec3 ro, vec3 rd, vec3 org, float rad)
 {
-    float mi = min(min(c.x, c.y), c.z);
-    float ma = max(max(c.x, c.y), c.z);
-    return (ma - mi)/(ma+ 1e-7);
+   float a = dot(rd, rd);
+   float b = 2. * dot(rd, ro - org);
+   float c = dot(ro - org, ro - org) - rad * rad;
+   float desc = b * b - 4. * a * c;
+   if (desc < 0.)
+      return vec2(1, 0);
+
+   return vec2((-b - sqrt(desc)) / (2. * a), (-b + sqrt(desc)) / (2. * a));
 }
 
-//from my "Will it blend" shader (https://www.shadertoy.com/view/lsdGzN)
-vec3 iLerp(in vec3 a, in vec3 b, in float x)
+// polynomial smooth min
+// from iq: https://www.iquilezles.org/www/articles/smin/smin.htm
+float smin( float a, float b, float k )
 {
-    vec3 ic = mix(a, b, x) + vec3(1e-6,0.,0.);
-    float sd = abs(getsat(ic) - mix(getsat(a), getsat(b), x));
-    vec3 dir = normalize(vec3(2.*ic.x - ic.y - ic.z, 2.*ic.y - ic.x - ic.z, 2.*ic.z - ic.y - ic.x));
-    float lgt = dot(vec3(1.0), ic);
-    float ff = dot(dir, normalize(ic));
-    ic += 1.5*dir*sd*ff*lgt;
-    return clamp(ic,0.,1.);
+    float h = clamp( 0.5+0.5*(b-a)/k, 0.0, 1.0 );
+    return mix( b, a, h ) - k*h*(1.0-h);
+}
+
+float smax(float a,float b,float k){ return -smin(-a,-b,k);}
+
+mat3 rotX(float a)
+{
+    return mat3(1., 0., 0.,
+                0., cos(a), sin(a),
+                0., -sin(a), cos(a));
+}
+
+mat3 rotY(float a)
+{
+    return mat3(cos(a), 0., sin(a),
+                0., 1., 0.,
+                -sin(a), 0., cos(a));
+}
+
+mat3 rotZ(float a)
+{
+    return mat3(cos(a), sin(a), 0.,
+                -sin(a), cos(a), 0.,
+                0., 0., 1.);
+}
+
+// Anti-aliasing samples count sqrt
+#define AA 2
+
+//float time;
+
+// Rotation matrix for spherical layer.
+mat3 rot(float r)
+{
+    float t = time - r * 2.;
+    float s = .5 + .5 * r;
+    return rotX(cos(t / 1.5) * s) * rotY(sin(t / 3.) * s);
+}
+
+// Scene SDF
+float dist(vec3 p)
+{
+    const float precis = 35.0;
+
+    vec3 op = p;
+    
+    p = rot(length(p)) * p;
+    
+    // Rotational velocity estimation.
+    float diff = distance(p, rot(length(op) - 1e-2) * op);
+
+    // A scaling factor based on the rotational velocity to
+    // simulate a 'bunching up' of the tentacles when they are spinning fast.
+    float k = max(1e-3, 1. + diff * 1.);
+    
+    p *= k;
+    op *= k;
+    
+    vec3 q;
+    vec2 sf = inverseSF( normalize(p), precis, q ); 
+    
+    q *= k;
+    
+    float d = length(p);
+    
+    // Alternating tentacle lengths based on spiral point ID.
+    float r3 = (mod(sf.x, 3.) < 1.) ? 1. : 1.45;
+    float r2 = r3 / k;
+
+    d = smax(sf.y - diff * 2.2 - .04 / dot(p, p), d - r3, 32. / 200.);
+        
+    // Add spheres at the ends of the tentacles using the unrotated
+    // sample space, to keep them spherical.
+    q = transpose(rot(r2 + .05)) * q;
+    d = smin(d,  length(op - q * r2) - .1, 32. / 200.);
+    
+    return min(d * .6 / k, .2);
+}
+
+// A special field which is only applied when extracing surface normals.
+float bump(vec3 p)
+{
+    p = rot(length(p)) * p;
+    float f = 0.;
+    // FBM
+    for(int i = 0; i < 3; ++i)
+    	f += textureLod(iChannel0, p * exp2(float(i)), 0.).r / exp2(float(i) + 1.);
+    return f * (1. - smoothstep(1.3, 1.5, length(p))) * .5;
+}
+
+vec3 getNormal(vec3 p)
+{
+    // Here the epsilon used for scene normal extraction is larger than the detailed
+    // bump epsilon. The larger geometry epsilon results in a smoothing effect which helps
+    // to blend the bases of the tentacles together.
+    
+    const vec2 eps = vec2(1e-1, 0);
+    const vec2 eps2 = vec2(1e-3, 0);
+    return normalize(vec3(dist(p + eps.xyy) + bump(p + eps2.xyy) - dist(p - eps.xyy) - bump(p - eps2.xyy),
+                          dist(p + eps.yxy) + bump(p + eps2.yxy) - dist(p - eps.yxy) - bump(p - eps2.yxy),
+                          dist(p + eps.yyx) + bump(p + eps2.yyx) - dist(p - eps.yyx) - bump(p - eps2.yyx)));
+}
+
+// Pyramid waveform
+float tri(float x)
+{
+    return min(fract(x) * 2., 2. - 2. * fract(x));
+}
+
+vec3 render(vec2 fragCoord)
+{
+    // Jittered time sample for motionblur
+    //time = iTime + texelFetch(iChannel1, ivec2(fragCoord * 2.) & 1023, 0).r * .025;
+    
+    vec3 fragColor = vec3(0);
+    
+    vec2 uv = fragCoord / iResolution.xy * 2. - 1.;
+    uv.x *= iResolution.x / iResolution.y;
+
+    vec3 ro = vec3(0, 0, 3), rd = normalize(vec3(uv, -1.8));
+
+    ro.y += sin(time / 4.) * .03;
+    ro.x += sin(time / 5.) * .03;
+    
+    // Clip to a bounding sphere
+    vec2 spheret = intersectSphere(ro, rd, vec3(0), 1.6);
+
+    // Background colour
+    vec3 bg = vec3(.75) * mix(vec3(.5, .5, 1.), vec3(1), .6) * (1. - smoothstep(0., 7., length(uv)));
+
+    if(spheret.x > spheret.y)
+        return bg;
+
+    float t = spheret.x;
+    float maxt = spheret.y;
+
+    // Raymarch
+    for(int i = 0; i < 80; ++i)
+    {
+        float d = dist(ro + rd * t);
+        if(abs(d) < 1e-4 || t > maxt)
+            break;
+        t += d;
+    }
+
+    if(t > maxt)
+    {
+        fragColor.rgb = bg;
+    }
+    else
+    {
+        vec3 rp = ro + rd * t;
+        vec3 n = getNormal(rp);
+        vec3 r = reflect(rd, n);
+        float l = length(rp);
+        float fr = clamp(1. - dot(n, -rd), 0., 1.);
+
+    	// Apply some fake shadowing to the specular highlight and the backlight,
+        // by simulating a spherical occluder for the 'body' at the center of the object.
+        float bodyR = .5;
+        float cone = cos(atan(bodyR / l));
+
+        float specshad = 1. - smoothstep(-.1, .1, dot(r, normalize(vec3(0) - rp)) - cone) * 1.;
+        float specshad2 = 1. - smoothstep(-.3, .3, dot(r, normalize(vec3(0) - rp)) - cone) * 1.;
+
+        // Backlight / fake SSS
+        fragColor.rgb = bg * mix(vec3(.2, .5, 1.) / 2., vec3(1., .9, .8).bgr, specshad2 * pow(fr, .8));
+        
+        // Fake AO from center of body
+        fragColor.rgb *= vec3(pow(mix(.5 + .5 * dot(n, normalize(vec3(0) - rp)), 1., smoothstep(0., 1.5, l)), .5));
+        
+        // Slight AO / diffuse bleeding
+        fragColor.rgb *= mix(vec3(.75,1.,.75), vec3(1), smoothstep(0.1, .8, l));
+
+        vec3 c = fragColor.rgb;
+        
+        // Blue / green alternating pattern
+        fragColor.rgb = mix(c.bbb * vec3(.5,1.,.5), fragColor.rgb, smoothstep(.3, .7, tri(l * 4.)));
+        
+        // Yellow tips
+        fragColor.rgb = mix(fragColor.rgb, c.bbb * vec3(1,1,.5), smoothstep(1.4, 1.5, l));
+        
+        // Yellow tips self-illumination
+        fragColor.rgb += vec3(1,1,.4) * smoothstep(1.4, 1.5, l) * .11;
+
+        // Specular highlight
+        fragColor.rgb += specshad * .9 * smoothstep(.4, .7, dot(r, normalize(vec3(1)))) * fr;
+
+        // Mist
+        fragColor.rgb += vec3(mix(vec3(.5, .5, 1.), vec3(0), exp(-t / 25.)));
+    }
+
+    return fragColor;
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{	
-	vec2 q = fragCoord.xy/resolution.xy;
-    vec2 p = (gl_FragCoord.xy - 0.5*resolution.xy)/resolution.y;
-    bsMo = (0.5*resolution.xy)/resolution.y;
+{
+    fragColor.rgb = vec3(0);
     
-    float time1 = time*3.;
-    vec3 ro = vec3(0,0,time1);
+    // Anti-aliasing sample loop
+    for(int y = 0; y < AA; ++y)
+    	for(int x = 0; x < AA; ++x)
+        {
+			fragColor.rgb += clamp(render(fragCoord + vec2(x, y) / float(AA)), 0., 1.);
+        }
     
-    ro += vec3(sin(time)*0.5,sin(time*1.)*0.,0);
-        
-    float dspAmp = .85;
-    ro.xy += disp(ro.z)*dspAmp;
-    float tgtDst = 3.5;
+    fragColor.rgb /= float(AA * AA);
     
-    vec3 target = normalize(ro - vec3(disp(time1 + tgtDst)*dspAmp, time1 + tgtDst));
-    ro.x -= bsMo.x*2.;
-    vec3 rightdir = normalize(cross(target, vec3(0,1,0)));
-    vec3 updir = normalize(cross(rightdir, target));
-    rightdir = normalize(cross(updir, target));
-	vec3 rd=normalize((p.x*rightdir + p.y*updir)*1. - target);
-    rd.xy *= rot(-disp(time1 + 3.5).x*0.2 + bsMo.x);
-    prm1 = smoothstep(-0.4, 0.4,sin(time*0.3));
-	vec4 scn = render(ro, rd, time1);
-		
-    vec3 col = scn.rgb;
-    col = iLerp(col.bgr, col.rgb, clamp(1.-prm1,0.05,1.));
+    // Contrast
+    fragColor.rgb = (fragColor.rgb * 1.2 - .05);
     
-    col = pow(col, vec3(.55,0.65,0.6))*vec3(1.,.97,.9);
-
-    col *= pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.12)*0.7+0.3; //Vign
-    
-	fragColor = vec4( col, 1.0 );
+    // Clamp, gamma, dither
+    fragColor.rgb = pow(clamp(fragColor.rgb, 0., 1.), vec3(1. / 2.2)) + texelFetch(iChannel1, ivec2(fragCoord) & 1023, 0).gba / 200.;
 }
+// --------[ Original ShaderToy ends here ]---------- //
 
-void main( void ) {
+void main(void)
+{
     mainImage(gl_FragColor, gl_FragCoord.xy);
+    gl_FragColor.a = 1.0;
 }
