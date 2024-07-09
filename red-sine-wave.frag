@@ -21,6 +21,6 @@ void main( void ) {
 	//gl_FragColor.r = 1.0;
 	gl_FragColor.g = mouse.x / 15.0 + 0.128;
 	gl_FragColor.b = uv.y / 10.0 + 0.25;
-	gl_FragColor.a = uv.y + 1.4;
+	gl_FragColor.a = 1.0;
 	}
 }
