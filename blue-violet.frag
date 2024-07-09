@@ -1,6 +1,7 @@
-#ifdef GL_ES
+/* Blue Violet */
+/* https://glslsandbox.com/e#92560.0 */
+
 precision mediump float;
-#endif
 
 uniform vec2 resolution;
 uniform float time;
@@ -26,6 +27,3 @@ void main() {
     gl_FragColor = vec4(col, 1.0);
     gl_FragColor = vec4(gl_FragColor.xyz, 1.);
 }
-
-/* Blue Violet */
-/* https://glslsandbox.com/e#92560.0 */

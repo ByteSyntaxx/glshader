@@ -1,6 +1,7 @@
-#ifdef GL_ES
+/* EaZyClient GL Shader */
+/* https://glslsandbox.com/e#74414.0 */
+
 precision mediump float;
-#endif
 
 uniform float time;
 uniform vec2 resolution;

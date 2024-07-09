@@ -1,10 +1,8 @@
+/* Green Dots */
+/* https://glslsandbox.com/e#70624.0 */
 
-
-#ifdef GL_ES
 precision mediump float;
-#endif
 
-// glslsandbox uniforms
 uniform float time;
 uniform vec2 resolution;
 
@@ -27,6 +25,3 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 void main(void) {
     mainImage(gl_FragColor, gl_FragCoord.xy);
 }
-
-/* Green Dots */
-/* https://glslsandbox.com/e#70624.0 */

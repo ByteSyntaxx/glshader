@@ -1,14 +1,7 @@
-#ifdef GL_ES
 precision mediump float;
-#endif
 
-// glslsandbox uniforms
 uniform float time;
 uniform vec2 resolution;
-
-// shadertoy emulation
-#define iTime time
-#define iResolution resolution
 
 float field(in vec3 p, float s) {
     float strength = 7. + .03 * log(1.e-6 + fract(sin(iTime) * 4373.11));

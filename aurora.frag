@@ -1,7 +1,7 @@
+/* Aurora */
+/* https://glslsandbox.com/e#108577.0 */
 
-#ifdef GL_ES
-precision lowp float;
-#endif
+precision mediump float;
 
 // glslsandbox uniforms
 uniform float time;
@@ -60,6 +60,3 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 void main(void) {
     mainImage(gl_FragColor, gl_FragCoord.xy);
 }
-
-/* Aurora */
-/* https://glslsandbox.com/e#108577.0 */

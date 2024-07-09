@@ -1,6 +1,7 @@
-#ifdef GL_ES
+/* Cubes */
+/* https://glslsandbox.com/e#45436.0 */
+
 precision mediump float;
-#endif
 
 uniform float time;
 uniform vec2 resolution;
@@ -54,8 +55,3 @@ void main(void)
     vec3 tint = vec3(st - 0.5,0.5,st + 0.5);
     gl_FragColor = vec4(fc * tint, 1.0);
 }
-
-/*
-* Cubes
-* https://glslsandbox.com/e#45436.0
-*/
