@@ -3,9 +3,9 @@
 
 precision mediump float;
 
-uniform vec2 resolution;
 uniform float time;
 uniform vec2 mouse;
+uniform vec2 resolution;
 
 const int complexity = 20;                  // More points of color.
 const float fluid_speed = 5.0;                 // Drives speed, higher number will make it slower.

@@ -3,9 +3,9 @@
 
 precision mediump float;
 
-uniform vec2 resolution;
 uniform float time;
 uniform vec2 mouse;
+uniform vec2 resolution;
 
 float random(in vec2 point) {
     return fract(100.0 * sin(point.x + fract(100.0 * sin(point.y)))); // http://www.matteo-basei.it/noise

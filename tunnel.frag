@@ -1,3 +1,6 @@
+/* TunnelShader */
+/* https://glslsandbox.com/e#109384.0 */
+
 precision mediump float;
 
 uniform float time;
@@ -19,6 +22,3 @@ void main(void) {
     color += mix(vec3(0.9, 0.8, 1.0), vec3(0.1, 0.2, 0.2), pow(c, 0.1)) * 0.75;
     gl_FragColor = vec4(color * clamp(dd, 0.0, 9.0), 1.0);
 }
-
-/* TunnelShader */
-/* https://glslsandbox.com/e#109384.0 */

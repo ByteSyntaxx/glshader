@@ -1,7 +1,7 @@
 precision mediump float;
 
-uniform vec2 resolution;
 uniform float time;
+uniform vec2 resolution;
 
 const int complexity = 35;
 const float whirlpools = 50.0;
