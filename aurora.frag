@@ -7,12 +7,10 @@ precision mediump float;
 uniform float time;
 uniform vec2 resolution;
 
-// Simple hash function
 float hash(float n) {
     return fract(sin(n) * 78757.5757 + cos(n) * 71767.8727);
 }
 
-// 2D noise function
 float noise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
@@ -22,7 +20,6 @@ float noise(vec2 p) {
                mix(hash(i.x + hash(i.y + 1.0)), hash(i.x + 1.0 + hash(i.y + 1.0)), u.x), u.y);
 }
 
-// Aurora layer function
 vec3 auroraLayer(vec2 uv, float speed, float intensity, vec3 color) {
     float t = time * speed;
     vec2 scaleXY = vec2(2.0, 2.0);
@@ -35,12 +32,10 @@ vec3 auroraLayer(vec2 uv, float speed, float intensity, vec3 color) {
 }
 
 
-// Main image function
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / resolution.xy;
     uv.x *= resolution.x / resolution.y;
 
-    // Create multiple aurora layers with varying colors, speeds, and intensities
     vec3 color = vec3(0.0);
 
     color += auroraLayer(uv, 0.05, 0.3, vec3(0.0, 0.2, 0.3));

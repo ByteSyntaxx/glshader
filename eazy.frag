@@ -41,6 +41,3 @@ void main(void) {
     color3 *= color3;
     gl_FragColor = vec4(color3.r * R_FACTOR, color3.g * G_FACTOR, color3.b * B_FACTOR, 1.);
 }
-
-/* EaZyClient GL Shader */
-/* https://glslsandbox.com/e#74414.0 */

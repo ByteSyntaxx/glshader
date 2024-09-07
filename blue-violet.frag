@@ -7,8 +7,8 @@ uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
 
-const int complexity = 20;                  // More points of color.
-const float fluid_speed = 5.0;                 // Drives speed, higher number will make it slower.
+const int complexity = 20;
+const float fluid_speed = 5.0;
 const float color_intensity = 0.2;
 uniform sampler2D sTexture;
 

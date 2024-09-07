@@ -1,3 +1,7 @@
+/* Noise Shader */
+/* https://glslsandbox.com/e#81592.0 */
+/* https://glslsandbox.com/e#81562.0 */
+
 precision mediump float;
 
 uniform float time;
@@ -74,7 +78,3 @@ void main() {
 
     gl_FragColor = vec4(color, 1.);
 }
-
-/* Noise Shader */
-/* https://glslsandbox.com/e#81592.0 */
-/* https://glslsandbox.com/e#81562.0 */

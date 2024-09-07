@@ -15,7 +15,6 @@ float sdBox( vec3 p, vec3 b )
 float map(vec3 p)
 {
     vec3 q = fract(p) * 2.0 - 1.0;
-    //return length(q) - 0.1;
     return sdBox(q, vec3(0.25));
 }
 
