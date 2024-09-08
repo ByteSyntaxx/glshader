@@ -1,3 +1,6 @@
+/* Violet Waves */
+/* https://glslsandbox.com/e#107281.1 */
+
 precision mediump float;
 
 #define PI2 6.28318530718
