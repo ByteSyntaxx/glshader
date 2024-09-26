@@ -5,8 +5,6 @@ precision mediump float;
 
 uniform float time;
 uniform vec2 resolution;
-vec3  iResolution;
-float iTime;
 
 #ifdef FAST_DESCENT
 const vec3 cameraDir = normalize(vec3(-2.0, -1.0, -4.0));
@@ -251,7 +249,7 @@ vec3 addSign(vec3 color, vec3 pos, float side, vec2 id) {
     vec3 outlineColor = mix(signColorA, signColorB, hash3(id + 0.6));
     float flash = 6.0 - 24.0 * hash1(id + 0.8);
     flash *= step(3.0, flash);
-    flash = smoothstep(0.1, 0.5, 0.5 + 0.5 * cos(flash * iTime));
+    flash = smoothstep(0.1, 0.5, 0.5 + 0.5 * cos(flash * time));
 
     vec2 halfSize = vec2(halfWidth, halfWidth * charCount);
     center.y -= halfSize.y;
@@ -262,7 +260,7 @@ vec3 addSign(vec3 color, vec3 pos, float side, vec2 id) {
     vec2 charId = id + 0.05 + 0.1 * floor(charPos);
     float flicker = hash1(charId);
     flicker = step(0.93, flicker);
-    flicker = 1.0 - flicker * step(0.96, hash1(charId, iTime));
+    flicker = 1.0 - flicker * step(0.96, hash1(charId, time));
 
     float char_1 = -3.5 + 8.0 * noise(id + 6.0 * charPos);
     charPos = fract(charPos);
@@ -273,20 +271,18 @@ vec3 addSign(vec3 color, vec3 pos, float side, vec2 id) {
     outline = smoothstep(0.0, 0.2, outline) * smoothstep(0.5, 0.3, outline);
     return mix(color, outlineColor, flash * outline);
 }
-#undef time
-#undef resolution
 
 void main(void)
 {
 
-    vec2 center = -speed * iTime * cameraDir.xy;
+    vec2 center = -speed * time * cameraDir.xy;
     vec3 eye = vec3(center, 0.0) - cameraDist * cameraDir;
 
     vec3 forward = normalize(cameraDir);
     vec3 right = normalize(cross(forward, vec3(0.0, 0.0, 1.0)));
     vec3 up = cross(right, forward);
-    vec2 xy = 2.0 * gl_FragCoord.xy - iResolution.xy;
-    vec3 ray = normalize(xy.x * right + xy.y * up + zoom * forward * iResolution.y);
+    vec2 xy = 2.0 * gl_FragCoord.xy - resolution.xy;
+    vec3 ray = normalize(xy.x * right + xy.y * up + zoom * forward * resolution.y);
 
     vec4 res = castRay(eye, ray, center);
     vec3 p = eye + res.x * ray;
@@ -300,14 +296,11 @@ void main(void)
     float fog = exp(-fogDensity * max(res.x - fogOffset, 0.0));
     color = mix(fogColor, color, fog);
 
-    float time = lightSpeed * iTime;
+    float time = lightSpeed * time;
     color += addLight(eye.xyz, ray.xyz, res.x, time, lightHeight - 0.6);
     color += addLight(eye.yxz, ray.yxz, res.x, time, lightHeight - 0.4);
     color += addLight(vec3(-eye.xy, eye.z), vec3(-ray.xy, ray.z), res.x, time, lightHeight - 0.2);
     color += addLight(vec3(-eye.yx, eye.z), vec3(-ray.yx, ray.z), res.x, time, lightHeight);
-
-    iResolution = vec3(resolution, 0.0);
-    iTime = time;
 
     fragmentColor = vec4(color, 1.0);
 }

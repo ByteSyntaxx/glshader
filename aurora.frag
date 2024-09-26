@@ -36,7 +36,6 @@ vec3 auroraLayer(vec2 uv, float speed, float intensity, vec3 color) {
 }
 
 void main(void) {
-
     vec2 uv = gl_FragCoord.xy / resolution.xy;
     uv.x *= resolution.x / resolution.y;
 

@@ -10,23 +10,19 @@ uniform vec2 resolution;
 
 out vec4 fragmentColor;
 
-float sdBox( vec3 p, vec3 b )
-{
+float sdBox( vec3 p, vec3 b ) {
     vec3 d = abs(p) - b;
     return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
-float map(vec3 p)
-{
+float map(vec3 p) {
     vec3 q = fract(p) * 2.0 - 1.0;
     return sdBox(q, vec3(0.25));
 }
 
-float trace(vec3 o, vec3 r)
-{
+float trace(vec3 o, vec3 r) {
     float t = 0.0;
-    for (int i = 0; i < 32; ++i)
-    {
+    for (int i = 0; i < 32; ++i) {
         vec3 p = o + r * t;
         float d = map(p);
         t += d * 0.5;
@@ -34,8 +30,7 @@ float trace(vec3 o, vec3 r)
     return t;
 }
 
-void main(void)
-{
+void main(void) {
     vec2 uv = gl_FragCoord.xy / resolution.xy;
 
     uv = uv * 2.0 - 1.0;

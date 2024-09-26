@@ -15,6 +15,7 @@ float ball(vec2 p, float fx, float fy, float ax, float ay) {
     vec2 r = vec2(p.x + sin(time * fx) * ax, p.y + cos(time * fy) * ay);	
     return 0.09 / length(r);
 }
+
 void main(void) {
     vec2 q = gl_FragCoord.xy / resolution.xy;
     vec2 p = -1.0 + 2.0 * q;	
