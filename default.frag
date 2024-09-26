@@ -1,12 +1,16 @@
 /* Default */
 /* https://glslsandbox.com/e#99704.0 */
 
+#version 330
+
 precision mediump float;
 
 #define NUM_OCTAVES 4
 
 uniform float time;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 mat3 rotX(float a) {
     float c = cos(a);
@@ -90,5 +94,5 @@ void main(void) {
 
     color = (f *f * f + 0.8 * f * f + 0.8 * f) * color;
 
-    gl_FragColor = vec4(color, 1.0);
+    fragmentColor = vec4(color, 1.0);
 }
