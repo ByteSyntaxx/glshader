@@ -1,6 +1,9 @@
 /* Blue Violet */
 /* https://glslsandbox.com/e#92560.0 */
 
+
+#version 460
+
 precision mediump float;
 
 uniform float time;
@@ -11,6 +14,8 @@ const int complexity = 20;
 const float fluid_speed = 5.0;
 const float color_intensity = 0.2;
 uniform sampler2D sTexture;
+
+out vec4 fragmentColor;
 
 void main() {
 
@@ -24,6 +29,6 @@ void main() {
 
     vec3 col = vec3(color_intensity * sin(3.0 * p.x) + color_intensity + 0.3, color_intensity * sin(3.0 * p.y) + color_intensity + 0.2, sin(p.x + p.y) + 2.);
 
-    gl_FragColor = vec4(col, 1.0);
-    gl_FragColor = vec4(gl_FragColor.xyz, 1.);
+    fragmentColor = vec4(col, 1.0);
+    fragmentColor = vec4(fragmentColor.xyz, 1.);
 }

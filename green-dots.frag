@@ -1,14 +1,18 @@
 /* Green Dots */
 /* https://glslsandbox.com/e#70624.0 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
 uniform vec2 resolution;
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+out vec4 fragmentColor;
+
+void main(void) {
     float time = time;
-    vec2 uv = (fragCoord * 2. - resolution.xy) / resolution.y;
+    vec2 uv = (gl_FragCoord.xy * 2. - resolution.xy) / resolution.y;
 
     float s = 0.;
     for (float p = 0.; p < 100.; p++) {
@@ -19,9 +23,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         float l = length(x - uv.xy);
         s += sin((l - q.z) * 10.) / (1. + max(0., l - .01) * 200.);
     }
-    fragColor = mix(vec4(.0, .08, .1, 1), vec4(0, .5, .4, 1), max(0., (s * .9) + 0.1));
-}
-
-void main(void) {
-    mainImage(gl_FragColor, gl_FragCoord.xy);
+    fragmentColor = mix(vec4(.0, .08, .1, 1), vec4(0, .5, .4, 1), max(0., (s * .9) + 0.1));
 }

@@ -59,7 +59,7 @@ float fbm(vec2 pos) {
     return v;
 }
 
-void main(void) {
+void main() {
     vec2 p = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
 
     float t = 0.3, d;

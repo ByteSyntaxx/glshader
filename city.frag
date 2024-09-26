@@ -1,3 +1,5 @@
+#version 460
+
 precision mediump float;
 
 
@@ -50,6 +52,7 @@ const vec3 signColorB = vec3(3.0, 3.0, 3.0);
 
 const float tau = 6.283185;
 
+out vec4 fragmentColor;
 
 float hash1(float p) {
     vec3 p3 = fract(p * vec3(5.3983, 5.4427, 6.9371));
@@ -270,15 +273,19 @@ vec3 addSign(vec3 color, vec3 pos, float side, vec2 id) {
     outline = smoothstep(0.0, 0.2, outline) * smoothstep(0.5, 0.3, outline);
     return mix(color, outlineColor, flash * outline);
 }
+#undef time
+#undef resolution
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+void main(void)
+{
+
     vec2 center = -speed * iTime * cameraDir.xy;
     vec3 eye = vec3(center, 0.0) - cameraDist * cameraDir;
 
     vec3 forward = normalize(cameraDir);
     vec3 right = normalize(cross(forward, vec3(0.0, 0.0, 1.0)));
     vec3 up = cross(right, forward);
-    vec2 xy = 2.0 * fragCoord - iResolution.xy;
+    vec2 xy = 2.0 * gl_FragCoord.xy - iResolution.xy;
     vec3 ray = normalize(xy.x * right + xy.y * up + zoom * forward * iResolution.y);
 
     vec4 res = castRay(eye, ray, center);
@@ -299,17 +306,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     color += addLight(vec3(-eye.xy, eye.z), vec3(-ray.xy, ray.z), res.x, time, lightHeight - 0.2);
     color += addLight(vec3(-eye.yx, eye.z), vec3(-ray.yx, ray.z), res.x, time, lightHeight);
 
-    fragColor = vec4(color, 1.0);
-}
-#undef time
-#undef resolution
+    iResolution = vec3(resolution, 0.0);
+    iTime = time;
 
-void main(void)
-{
-  iResolution = vec3(resolution, 0.0);
-  iTime = time;
-
-  mainImage(gl_FragColor, gl_FragCoord.xy);
+    fragmentColor = vec4(color, 1.0);
 }
 
 

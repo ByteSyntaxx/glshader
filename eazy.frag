@@ -1,6 +1,8 @@
 /* EaZyClient GL Shader */
 /* https://glslsandbox.com/e#74414.0 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
@@ -11,6 +13,8 @@ uniform vec2 resolution;
 #define B_FACTOR 0.0
 
 const int MAXITER = 42;
+
+out vec4 fragmentColor;
 
 vec3 field(vec3 p) {
     p *= .1;
@@ -39,5 +43,5 @@ void main(void) {
     }
     vec3 color3 = vec3(1. - 1. / (1. + color * (.09 / float(MAXITER * MAXITER))));
     color3 *= color3;
-    gl_FragColor = vec4(color3.r * R_FACTOR, color3.g * G_FACTOR, color3.b * B_FACTOR, 1.);
+    fragmentColor = vec4(color3.r * R_FACTOR, color3.g * G_FACTOR, color3.b * B_FACTOR, 1.);
 }

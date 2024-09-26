@@ -1,11 +1,15 @@
 /* Aurora */
 /* https://glslsandbox.com/e#108577.0 */
 
+#version 460
+
 precision mediump float;
 
 // glslsandbox uniforms
 uniform float time;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 float hash(float n) {
     return fract(sin(n) * 78757.5757 + cos(n) * 71767.8727);
@@ -31,9 +35,9 @@ vec3 auroraLayer(vec2 uv, float speed, float intensity, vec3 color) {
     return aurora * intensity * color;
 }
 
+void main(void) {
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-    vec2 uv = fragCoord / resolution.xy;
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
     uv.x *= resolution.x / resolution.y;
 
     vec3 color = vec3(0.0);
@@ -49,9 +53,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     color += skyColor2 * (1.0 - smoothstep(0.0, 2.0, uv.y));
     color += skyColor1 * (1.0 - smoothstep(0.0, 1.0, uv.y));
 
-    fragColor = vec4(color, 2.0);
-}
-
-void main(void) {
-    mainImage(gl_FragColor, gl_FragCoord.xy);
+    fragmentColor = vec4(color, 2.0);
 }

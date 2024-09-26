@@ -1,6 +1,8 @@
 /* Violet Waves */
 /* https://glslsandbox.com/e#107281.1 */
 
+#version 460
+
 precision mediump float;
 
 #define PI2 6.28318530718
@@ -9,11 +11,12 @@ precision mediump float;
 uniform float time;
 uniform vec2 resolution;
 
+out vec4 fragmentColor;
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
+void main( void ) {
+
     float time = time * .12;
-    vec2 uv = fragCoord.xy / resolution.xy;
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
 
     vec2 p = mod(uv * PI2, PI2) - 254.0  ;
     vec2 i = vec2(p);
@@ -30,10 +33,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     c = 1.23-pow(c, 1.22);
     vec3 colour = vec3(0.1+pow(abs(c),19.2), 0.1+pow(abs(c),50.2), 0.12+pow(abs(c), 5.0));
 
-    fragColor = vec4(colour, 1);
-}
+    fragmentColor = vec4(colour, 1);
 
-
-void main( void ) {
-    mainImage(gl_FragColor, gl_FragCoord.xy);
 }

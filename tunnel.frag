@@ -1,11 +1,15 @@
 /* TunnelShader */
 /* https://glslsandbox.com/e#109384.0 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 void main(void) {
     vec2 position = (gl_FragCoord.xy - resolution * 0.5) / resolution.yy;
@@ -20,5 +24,5 @@ void main(void) {
     vec3 color = mix(vec3(1.0, 1.8, 0.9), vec3(0.1, 0.1, 0.2), pow(a, 0.2)) * 0.75;
     color += mix(vec3(0.8, 0.9, 1.0), vec3(0.1, 0.1, 0.2), pow(b, 0.1)) * 0.75;
     color += mix(vec3(0.9, 0.8, 1.0), vec3(0.1, 0.2, 0.2), pow(c, 0.1)) * 0.75;
-    gl_FragColor = vec4(color * clamp(dd, 0.0, 9.0), 1.0);
+    fragmentColor = vec4(color * clamp(dd, 0.0, 9.0), 1.0);
 }

@@ -1,11 +1,14 @@
 /* Blue-Beige */
 /* https://glslsandbox.com/e#67474.0 */
 
+#version 460
+
 precision mediump float;
 
-uniform vec2 resolution;
 uniform float time;
-uniform vec2 mouse;
+uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 float random(in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
@@ -75,5 +78,5 @@ void main() {
     float value = pow(pattern(p), 1.);
     vec3 color = palette(value);
 
-    gl_FragColor = vec4(color, 1.);
+    fragmentColor = vec4(color, 1.);
 }

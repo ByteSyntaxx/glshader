@@ -1,10 +1,14 @@
 /* Cubes */
 /* https://glslsandbox.com/e#45436.0 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 float sdBox( vec3 p, vec3 b )
 {
@@ -52,5 +56,5 @@ void main(void)
     vec3 fc = vec3(fog * 2.0);
 
     vec3 tint = vec3(st - 0.5,0.5,st + 0.5);
-    gl_FragColor = vec4(fc * tint, 1.0);
+    fragmentColor = vec4(fc * tint, 1.0);
 }

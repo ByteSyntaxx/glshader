@@ -2,11 +2,15 @@
 /* https://glslsandbox.com/e#81592.0 */
 /* https://glslsandbox.com/e#81562.0 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 float random(in vec2 point) {
     return fract(100.0 * sin(point.x + fract(100.0 * sin(point.y)))); // http://www.matteo-basei.it/noise
@@ -76,5 +80,5 @@ void main() {
     float value = pow(pattern(p), 2.);
     vec3 color = palette(value);
 
-    gl_FragColor = vec4(color, 1.);
+    fragmentColor = vec4(color, 1.);
 }

@@ -1,10 +1,14 @@
 /* Technical */
 /* https://glslsandbox.com/e#55422.7 */
 
+#version 460
+
 precision mediump float;
 
 uniform float time;
 uniform vec2 resolution;
+
+out vec4 fragmentColor;
 
 float rand(float n)
 {
@@ -92,5 +96,5 @@ void main(void)
 	color += vec3(1.0, 0.5, 1.0) * value;
 	color += vec3(1.0, 0.5, 1.0) * light;
 	
-	gl_FragColor = vec4(color, 1.0);
+	fragmentColor = vec4(color, 1.0);
 }
