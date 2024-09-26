@@ -1,7 +1,7 @@
 /* Default */
 /* https://glslsandbox.com/e#99704.0 */
 
-#version 330
+#version 460
 
 precision mediump float;
 
