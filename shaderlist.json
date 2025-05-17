@@ -1,0 +1,16 @@
+{
+    "aurora": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/aurora.frag",
+    "blue-beige": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/blue-beige.frag",
+    "blue-violet": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/blue-violet.frag",
+    "city": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/city.frag",
+    "cubes": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/cubes.frag",
+    "default": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/default.frag",
+    "eazy": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/eazy.frag",
+    "green-dots": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/green-dots.frag",
+    "noise-contrast": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/contrast-noise.frag",
+    "noise-normal": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/normal-noise.frag",
+    "red-dots": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/red-dots.frag",
+    "smoke": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/smoke.frag",
+    "technical": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/technical.frag",
+    "violet-waves": "https://raw.githubusercontent.com/ByteSyntaxx/glshader/master/violet-waves.frag"
+}
